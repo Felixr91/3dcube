@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
+<!-- Style -->
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>CodePen - Perspective cube</title>
+<script>
+  window.console = window.console || function(t) {};
+</script>
+<script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+</head>
+<body translate="no" style="display: flex; flex-direction: column;">
+
+  <div class="scene">
+    <div class="cube">
+      <div class="cube__face cube__face--front">front</div>
+      <div class="cube__face cube__face--back">back</div>
+      <div class="cube__face cube__face--right">right</div>
+      <div class="cube__face cube__face--left">left</div>
+      <div class="cube__face cube__face--top">top</div>
+      <div class="cube__face cube__face--bottom">bottom</div>
+    </div>
+  </div>
+
+  <span style="height: 50px;">
+    <label>
+      perspective
+      <input class="perspective-range" type="range" min="1" max="1000" value="400" data-units="px" />
+    </label>
+  </span>
+
+
+
+  <span style="height: 50px;">
+    <label>
+      perspective-origin x
+      <input class="origin-x-range" type="range" min="0" max="100" value="50" data-units="%" />
+    </label>
+  </span>
+
+
+
+  <span style="height: 50px;">
+    <label>
+      perspective-origin y
+      <input class="origin-y-range" type="range" min="0" max="100" value="50" data-units="%" />
+    </label>
+  </span>
+
+
+
+  <span style="height: 50px;">
+    <label>
+      Spin cube
+      <input class="spin-cube-checkbox" type="checkbox" />
+    </label>
+  </span>
+
+
+
+  <span style="height: 50px;">
+    <label>
+      Backface visible
+      <input class="backface-checkbox" type="checkbox" checked />
+    </label>
+  </span>
+
+<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
+
+<script id="rendered-js">
+  /* ==================== RangeDisplay ==================== */
+
+  // displays the value of a range input
+  // why isn't this in the HTML5 spec?
+  function RangeDisplay(input) {
+    this.input = input;
+    this.output = document.createElement('span');
+    this.output.className = 'range-display';
+    this.units = this.input.getAttribute('data-units') || '';
+    // events
+    var onChange = this.update.bind(this);
+    this.input.addEventListener('change', onChange);
+    this.input.addEventListener('input', onChange);
+    // set initial output
+    this.update();
+    this.input.parentNode.appendChild(this.output);
+  }
+
+  RangeDisplay.prototype.update = function () {
+    this.output.textContent = this.input.value + this.units;
+  };
+
+  /* ==================== init ==================== */
+
+  // init RangeDisplays
+  var ranges = document.querySelectorAll('input[type="range"]');
+  for (var i = 0; i < ranges.length; i++) {if (window.CP.shouldStopExecution(0)) break;
+    new RangeDisplay(ranges[i]);
+  }window.CP.exitedLoop(0);
+
+
+
+  var scene = document.querySelector('.scene');
+  var cube = document.querySelector('.cube');
+  var originX = 50;
+  var originY = 50;
+
+  function updatePerspectiveOrigin() {
+    scene.style.perspectiveOrigin = originX + '% ' + originY + '%';
+  }
+
+  // perspective
+  var perspectiveRange = document.querySelector('.perspective-range');
+  var perspectiveDisplay = perspectiveRange.parentNode.querySelector('.range-display');
+  perspectiveRange.onchange = perspectiveRange.oninput = function () {
+    var value = perspectiveRange.value + 'px';
+    // set to none at max
+    if (value == '1000px') {
+      value = 'none';
+      perspectiveDisplay.textContent = 'none';
+    }
+    scene.style.perspective = value;
+  };
+  perspectiveRange.onchange();
+
+  // origin x
+  var originXRange = document.querySelector('.origin-x-range');
+  originXRange.onchange = originXRange.oninput = function () {
+    originX = originXRange.value;
+    updatePerspectiveOrigin();
+  };
+  originXRange.onchange();
+
+  // origin y
+  var originYRange = document.querySelector('.origin-y-range');
+  originYRange.onchange = originYRange.oninput = function () {
+    originY = originYRange.value;
+    updatePerspectiveOrigin();
+  };
+  originYRange.onchange();
+
+  // spin cube
+  var spinCubeCheckbox = document.querySelector('.spin-cube-checkbox');
+  spinCubeCheckbox.onchange = function () {
+    cube.classList.toggle('is-spinning', spinCubeCheckbox.checked);
+  };
+  spinCubeCheckbox.onchange();
+
+  // backface visibility
+  var backfaceCheckbox = document.querySelector('.backface-checkbox');
+  backfaceCheckbox.onchange = function () {
+    cube.classList.toggle('is-backface-hidden', !backfaceCheckbox.checked);
+  };
+        //# sourceURL=pen.js
+</script>
+
+</body>
+</html>
